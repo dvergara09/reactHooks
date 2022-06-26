@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import ThemeContext from '../context/ThemeContext'
 
 const Characters = () => {
   const [characters, setCharacters] = useState([])
+  const { theme } = useContext(ThemeContext)
+
+  const CharactersClasses = theme
+    ? 'relative bg-gray-800 text-white'
+    : 'relative bg-white'
 
   useEffect(() => {
     fetch('https://rickandmortyapi.com/api/character/')
       .then((response) => response.json())
       .then((data) => setCharacters(data.results))
   }, [])
+
   return (
-    <div className="bg-white">
+    <div className={CharactersClasses}>
       <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
+        <h2 className="text-2xl font-extrabold tracking-tight">
           Characters Rick and Morty
         </h2>
 
@@ -27,15 +34,13 @@ const Characters = () => {
               </div>
               <div className="mt-4 flex justify-between">
                 <div>
-                  <h3 className="text-sm text-gray-700">
+                  <h3 className="text-sm">
                     <a href={character.href}>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {character.name}
                     </a>
                   </h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    {character.species}
-                  </p>
+                  <p className="mt-1 text-sm ">{character.species}</p>
                 </div>
               </div>
             </div>
