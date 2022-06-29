@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useReducer } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useReducer,
+  useMemo
+} from 'react'
 import ThemeContext from '../context/ThemeContext'
 
 const initialState = {
@@ -21,10 +27,7 @@ const Characters = () => {
   const [characters, setCharacters] = useState([])
   const { theme } = useContext(ThemeContext)
   const [favorites, dispatch] = useReducer(favoriteReducer, initialState)
-
-  const CharactersClasses = theme
-    ? 'relative bg-gray-800 text-white'
-    : 'relative bg-white'
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     fetch('https://rickandmortyapi.com/api/character/')
@@ -32,10 +35,30 @@ const Characters = () => {
       .then((data) => setCharacters(data.results))
   }, [])
 
+  const CharactersClasses = theme
+    ? 'relative bg-gray-800 text-white'
+    : 'relative bg-white'
+
   const handleClick = (favorite) => {
     console.log(favorite)
     dispatch({ type: 'ADD_TO_FAVORITES', payload: favorite })
   }
+
+  const handleSearch = (event) => {
+    setSearch(event.target.value)
+  }
+
+  /* const filteredUsers = characters.filter((user) => {
+    return user.name.toLowerCase().includes(search.toLowerCase())
+  }) */
+
+  const filteredUsers = useMemo(
+    () =>
+      characters.filter((user) => {
+        return user.name.toLowerCase().includes(search.toLowerCase())
+      }),
+    [characters, search]
+  )
 
   return (
     <div className={CharactersClasses}>
@@ -43,8 +66,8 @@ const Characters = () => {
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl font-extrabold">Favorites</h2>
           <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {favorites.favorites.map((favorite) => (
-              <div key={favorite.id} className="group relative">
+            {favorites.favorites.map((favorite, index) => (
+              <div key={`${index}-${favorite.id}`} className="group relative">
                 <div className="w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
                   <img
                     src={favorite.image}
@@ -73,9 +96,15 @@ const Characters = () => {
         <h2 className="text-2xl font-extrabold tracking-tight">
           Characters Rick and Morty
         </h2>
-
+        <div>
+          <input
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            onChange={handleSearch}
+            placeholder="Search"
+          />
+        </div>
         <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {characters.map((character) => (
+          {filteredUsers.map((character) => (
             <div key={character.id} className="group relative">
               <div className="w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
                 <img
