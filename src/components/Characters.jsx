@@ -3,7 +3,8 @@ import React, {
   useEffect,
   useContext,
   useReducer,
-  useMemo
+  useMemo,
+  useRef
 } from 'react'
 import ThemeContext from '../context/ThemeContext'
 
@@ -28,6 +29,7 @@ const Characters = () => {
   const { theme } = useContext(ThemeContext)
   const [favorites, dispatch] = useReducer(favoriteReducer, initialState)
   const [search, setSearch] = useState('')
+  const searchInput = useRef(null)
 
   useEffect(() => {
     fetch('https://rickandmortyapi.com/api/character/')
@@ -44,8 +46,8 @@ const Characters = () => {
     dispatch({ type: 'ADD_TO_FAVORITES', payload: favorite })
   }
 
-  const handleSearch = (event) => {
-    setSearch(event.target.value)
+  const handleSearch = () => {
+    setSearch(searchInput.current.value)
   }
 
   /* const filteredUsers = characters.filter((user) => {
@@ -98,6 +100,7 @@ const Characters = () => {
         </h2>
         <div>
           <input
+            ref={searchInput}
             className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             onChange={handleSearch}
             placeholder="Search"
