@@ -7,6 +7,7 @@ import React, {
   useRef,
   useCallback
 } from 'react'
+import useCharacters from '../hooks/useCharacters'
 import ThemeContext from '../context/ThemeContext'
 import Search from './Search'
 const initialState = {
@@ -26,18 +27,22 @@ const favoriteReducer = (state, action) => {
 }
 
 const Characters = () => {
-  const [characters, setCharacters] = useState([])
+  /* const [characters, setCharacters] = useState([]) */
   const { theme } = useContext(ThemeContext)
   const [favorites, dispatch] = useReducer(favoriteReducer, initialState)
   const [search, setSearch] = useState('')
   const searchInput = useRef(null)
 
-  useEffect(() => {
+  const API = 'https://rickandmortyapi.com/api/character/'
+
+  const characters = useCharacters(API)
+
+  /* useEffect(() => {
     fetch('https://rickandmortyapi.com/api/character/')
       .then((response) => response.json())
       .then((data) => setCharacters(data.results))
   }, [])
-
+ */
   const CharactersClasses = theme
     ? 'relative bg-gray-800 text-white'
     : 'relative bg-white'
