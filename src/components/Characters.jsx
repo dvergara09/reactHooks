@@ -4,10 +4,11 @@ import React, {
   useContext,
   useReducer,
   useMemo,
-  useRef
+  useRef,
+  useCallback
 } from 'react'
 import ThemeContext from '../context/ThemeContext'
-
+import Search from './Search'
 const initialState = {
   favorites: []
 }
@@ -46,9 +47,13 @@ const Characters = () => {
     dispatch({ type: 'ADD_TO_FAVORITES', payload: favorite })
   }
 
-  const handleSearch = () => {
+  /* const handleSearch = () => {
     setSearch(searchInput.current.value)
-  }
+  } */
+
+  const handleSearch = useCallback(() => {
+    setSearch(searchInput.current.value)
+  }, [])
 
   /* const filteredUsers = characters.filter((user) => {
     return user.name.toLowerCase().includes(search.toLowerCase())
@@ -98,14 +103,11 @@ const Characters = () => {
         <h2 className="text-2xl font-extrabold tracking-tight">
           Characters Rick and Morty
         </h2>
-        <div>
-          <input
-            ref={searchInput}
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            onChange={handleSearch}
-            placeholder="Search"
-          />
-        </div>
+        <Search
+          search={search}
+          searchInput={searchInput}
+          handleSearch={handleSearch}
+        />
         <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {filteredUsers.map((character) => (
             <div key={character.id} className="group relative">
